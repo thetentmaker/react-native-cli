@@ -100,10 +100,3 @@ cd MyRnApp
 - 새 아키텍처와 Hermes를 활용하면 성능과 개발 경험을 개선할 수 있습니다.
 
 ---
-
-## 부록: 빠른 체크리스트
-- Node, Xcode, Android Studio, JDK, CocoaPods 최신화
-- iOS 권한 설명 키(Info.plist)와 Android 권한 선언(Manifest) 점검
-- Flipper 연결 및 필요한 플러그인 활성화
-- 패키지 매니저 선택(npm/yarn/pnpm/Bun)과 CI 캐시 전략 수립
-- 새 아키텍처/Hermes 사용 여부 결정 및 의존성 호환성 확인
