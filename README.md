@@ -202,3 +202,72 @@ const CameraModule = TurboModuleRegistry.get('CameraModule');
   - 더 작은 번들 사이즈(Android)
 
 ![](https://engineering.fb.com/wp-content/uploads/2019/07/HermesOSSChainReact_blog_FIN_1-1.gif)
+
+# 추가 학습
+## React Native에서 == vs === 비교 연산자
+
+React Native에서 값을 비교할 때 사용하는 두 가지 연산자의 차이점을 알아보겠습니다.
+
+### == (동등 연산자, Loose Equality)
+
+**타입 변환을 수행**한 후 값을 비교합니다. 서로 다른 타입의 값도 같다고 판단할 수 있습니다.
+
+#### 예시
+
+```javascript
+5 == "5"          // true (문자열 "5"를 숫자 5로 변환)
+true == 1         // true (true를 1로 변환)
+false == 0        // true (false를 0으로 변환)
+null == undefined // true
+"" == 0           // true (빈 문자열을 0으로 변환)
+```
+
+### === (일치 연산자, Strict Equality)
+
+**타입 변환 없이** 값과 타입을 모두 비교합니다. 값과 타입이 모두 같아야 true를 반환합니다.
+
+#### 예시
+
+```javascript
+5 === "5"         // false (타입이 다름: number vs string)
+true === 1        // false (타입이 다름: boolean vs number)
+false === 0       // false (타입이 다름: boolean vs number)
+null === undefined // false (타입이 다름)
+"" === 0          // false (타입이 다름: string vs number)
+5 === 5           // true (값과 타입 모두 같음)
+```
+
+### 권장사항
+
+React Native 개발에서는 **`===`를 사용하는 것을 강력히 권장**합니다.
+
+#### 이유
+
+1. **예측 가능한 동작**: 타입 변환으로 인한 예상치 못한 결과를 방지
+2. **성능**: 타입 변환 과정이 없어 더 빠름
+3. **코드 품질**: 더 명확하고 안전한 코드 작성 가능
+
+#### 좋은 예시 (===)
+
+```javascript
+if (userInput === "") {
+  // 빈 문자열인 경우만 처리
+}
+
+if (count === 0) {
+  // 숫자 0인 경우만 처리
+}
+```
+
+#### 피해야 할 예시 (==)
+
+```javascript
+if (userInput == 0) {
+  // "0", "", false 등 다양한 값이 true가 될 수 있음
+  // 예상치 못한 동작을 유발할 수 있음
+}
+```
+
+### 결론
+
+React Native에서는 의도치 않은 타입 변환을 피하고 더 안전한 코드를 작성하기 위해 **`===`를 사용**하는 것이 좋습니다.
