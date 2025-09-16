@@ -11,20 +11,20 @@ React Native CLI를 중심으로 모바일 앱 개발에 필요한 핵심 개념
 ```shell
 react-native log-android
 react-native log-ios
-- ```
+```
 
 ### 1-2. React Native CLI 설정하기
 ```shell
-brew install node
+brew install node # npm, npx 포함
 ```
 ```shell
-brew install watchman
+brew install watchman # 파일 시스템 감시 도구(file watcher), 파일이 변경되었는지 실시간으로 감지해주는 툴
 ````
 ```shell
-brew install ruby
+brew install ruby # pod install 명령이 ruby 스크립트로 실행
 ````
 ```shell
-brew install ruby-build
+brew install ruby-build # 루비 버전을 설치해주는 도구로 rbenv와 함께 사용됨
 ````
 ```shell
 brew install rbenv # 루비 버전 관리를 위함
@@ -156,33 +156,47 @@ sequenceDiagram
 ```text
 [JS Thread]
    |
-  (JSON으로 데이터 포장)
+  (JSON)
    |
 [Bridge]  ← 느림 / 비동기 / 병목
    |
-[Native Modules]
+  (JSON)
+   |
+[Native Thread]
 ```
 - TO-BE
 ```text
-[JS Thread]  ⇄  [JSI (C++)] ⇄ [TurboModules / Fabric / Native Modules]
-             (동기 / 빠름 / 직렬화 없음)
+JS Thread  <-> JSI (C++) ⇄ Native Code
+동기 / 빠름 / 직렬화 없음
 ```
+#### TurboModules(새로운 네이티브 모듈 시스템)
+```javascript
+// 기존 방식
+import { NativeModules } from 'react-native';
+const { CameraModule } = NativeModules;
+
+// TurboModules 방식
+import { TurboModuleRegistry } from 'react-native';
+const CameraModule = TurboModuleRegistry.get('CameraModule');
+```
+#### Fabric(새로운 렌더링 시스템)
+
+```tex
+기존: JavaScript → Bridge → Shadow Thread → Main Thread
+
+새로운: JavaScript → JSI → Fabric → Main Thread
+```
+
 ### 3-4. Hermes
-- RN에 최적화된 경량 JS 엔진. 빠른 시작 시간, 낮은 메모리 사용이 장점.
-- 대부분의 최신 RN 버전에서 기본 활성화되며, 성능 문제 해결에 큰 효과가 있습니다.
 
-### 3-5. New Architecture 프로젝트 만들어보기(개요)
-- 프로젝트 생성 시 최신 RN 버전을 사용하고, iOS/Android 설정에서 새 아키텍처 플래그를 켭니다.
-- 의존성과 플러그인이 새 아키텍처를 지원하는지 확인 후 빌드/실행합니다.
-```
-# 예시(버전과 옵션은 프로젝트 상황에 맞게 조정)
-npx @react-native-community/cli@latest init MyRnApp
-cd MyRnApp
-# iOS/Android 빌드 설정에서 새 아키텍처 옵션 활성화 후 빌드
-```
+**모바일에 특화된 빠르고 가벼운 JavaScript 엔진**
 
-### 3-6. Wrap up
-- RN CLI는 네이티브까지 제어가 필요한 팀에 적합합니다.
-- 플랫폼 기본 개념(Manifest/AppDelegate/권한/스킴)을 이해하면 문제 해결 속도가 크게 빨라집니다.
-- 새 아키텍처와 Hermes를 활용하면 성능과 개발 경험을 개선할 수 있습니다.
----
+- 도입 이전
+  - App 실행 -> JS파싱 -> 컴파일 -> 실행
+  - 런타임에 Javascript 파싱 및 컴파일
+- 도입 이후
+  - 빌드 시점 -> 바이트코드 생성 -> 앱 실행 시 바로 실행
+- 개선효과
+  - 앱 시작 시간 단축
+  - 메모리 사용량 감소
+  - 더 작은 번들 사이즈
