@@ -49,7 +49,7 @@ cd ios && pod install
 - 실행
 ```shell
 npm run ios
-- ```
+```
 
 ### 1-3. Expo와의 차이점
 - Expo: 빠른 시작, OTA 업데이트, 풍부한 SDK, 관리형/베어 워크플로우 제공. 단, 일부 네이티브 커스터마이징은 제한될 수 있음(관리형 기준).
@@ -100,7 +100,7 @@ npm run ios
 ```bash
 npx uri-scheme open "scheme://path" --ios
 npx uri-scheme open "scheme://path" --android
-```
+````
 ---
 
 ## 3) Native Module이 뭔가요?
@@ -117,7 +117,32 @@ npx uri-scheme open "scheme://path" --android
 - Shadow Thread: 레이아웃 계산 (Yoga 엔진 사용), 실제 레이아웃 정보가 계산되면 Main Thread에 전달되어 UI가 그려짐
 ```
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant OS
+    participant MainThread as Main Thread<br/>(UI Thread)
+    participant JSThread as JavaScript Thread
+    participant ShadowThread as Shadow Thread
+    participant YogaEngine as Yoga Layout Engine
 
+    User->>OS: 앱 아이콘 터치
+    OS->>MainThread: 앱 프로세스 시작
+    MainThread->>MainThread: 초기 화면 준비
+    MainThread->>JSThread: JavaScript 번들 로드<br/>(index.js, App.js)
+    
+    Note over JSThread: React 컴포넌트 로직 실행
+    JSThread->>JSThread: React Element Tree 생성
+    JSThread->>JSThread: Diffing 작업 수행
+    
+    JSThread->>ShadowThread: 변경된 트리 구조 전달
+    ShadowThread->>YogaEngine: 레이아웃 계산 요청
+    YogaEngine->>ShadowThread: Shadow Node Tree 생성
+    
+    ShadowThread->>MainThread: 레이아웃 정보 전달
+    MainThread->>MainThread: 네이티브 UI 컴포넌트<br/>생성/업데이트
+    MainThread->>User: 화면에 UI 표시
+```
 
 ### 3-2. Native Module이란?
 - JS에서 접근할 수 있도록 네이티브 기능을 래핑한 모듈입니다.
@@ -141,7 +166,6 @@ npx uri-scheme open "scheme://path" --android
 ```text
 [JS Thread]  ⇄  [JSI (C++)] ⇄ [TurboModules / Fabric / Native Modules]
              (동기 / 빠름 / 직렬화 없음)
-
 ```
 ### 3-4. Hermes
 - RN에 최적화된 경량 JS 엔진. 빠른 시작 시간, 낮은 메모리 사용이 장점.
@@ -161,5 +185,4 @@ cd MyRnApp
 - RN CLI는 네이티브까지 제어가 필요한 팀에 적합합니다.
 - 플랫폼 기본 개념(Manifest/AppDelegate/권한/스킴)을 이해하면 문제 해결 속도가 크게 빨라집니다.
 - 새 아키텍처와 Hermes를 활용하면 성능과 개발 경험을 개선할 수 있습니다.
-
 ---
