@@ -199,4 +199,6 @@ const CameraModule = TurboModuleRegistry.get('CameraModule');
 - 개선효과
   - 앱 시작 시간 단축
   - 메모리 사용량 감소
-  - 더 작은 번들 사이즈
+  - 더 작은 번들 사이즈(Android)
+
+![](https://engineering.fb.com/wp-content/uploads/2019/07/HermesOSSChainReact_blog_FIN_1-1.gif)
